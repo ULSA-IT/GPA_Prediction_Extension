@@ -1,11 +1,13 @@
-chrome.browserAction.onClicked.addListener(function (tab) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    var currentTab = tabs[0];
-    var url = new URL(currentTab.url);
-    if (url.hostname === "http://sinhvien.ulsa.edu.vn") {
-      chrome.browserAction.setPopup({ popup: "popup.html" });
-    } else {
-      alert("Only works with website abc.com");
-    }
-  });
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.action === "runGpa") {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: "runGpa" }, function(response) {
+          // Xử lý phản hồi nếu cần thiết
+          
+        });
+      }
+    });
+  }
 });
+
