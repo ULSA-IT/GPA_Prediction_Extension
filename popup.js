@@ -54,3 +54,16 @@ window.onload = () => {
 
   syncToggle();
 };
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("myButton").addEventListener("click", function () {
+   
+    chrome.runtime.sendMessage({ action: "runGpa" });
+  });
+});
+
+
+
+
+
+
