@@ -20,22 +20,34 @@ function gpa() {
       var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(3)").innerHTML);
       var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML);
       var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
-      rowData = [ten, tin, diem10, diem4];
+      if (!isNaN(diem10) && !isNaN(diem4)) {
+        rowData = [ten, tin, diem10, diem4];
+      }
+      
     } else if (numberOfColumns === 10) {
       var ten = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(3)").innerHTML;
       var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML);
       var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
       var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML);
-      rowData = [ten, tin, diem10, diem4];
+      if (!isNaN(diem10) && !isNaN(diem4)) {
+        rowData = [ten, tin, diem10, diem4];
+      }
+     
+
     } else {
       var ten = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML;
       var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
       var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML);
       var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(7)").innerHTML);
-      rowData = [ten, tin, diem10, diem4];
+      if (!isNaN(diem10) && !isNaN(diem4)) {
+        rowData = [ten, tin, diem10, diem4];
+      }
+      
     }
-
+    
+    if (rowData.length > 0) {
     XLSX.utils.sheet_add_aoa(worksheet, [rowData], { origin: -1 }); // Thêm dữ liệu vào worksheet
+    }
   }
 }
 
