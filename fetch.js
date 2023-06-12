@@ -4,7 +4,7 @@ function gpa() {
  var workbook = XLSX.utils.book_new();
  
  // Tạo một worksheet mới và đặt tiêu đề cột
- var worksheet = XLSX.utils.aoa_to_sheet([['Tên', 'Tín chỉ', 'Điểm hệ 10', 'Điểm hệ 4']]);
+ var worksheet = XLSX.utils.aoa_to_sheet([['Tên', 'Tín chỉ', 'Điểm hệ 10', 'Điểm hệ 4','Điểm chữ']]);
  
  var numberOfRows = document.querySelectorAll("#grdDiemDaTichLuy > tbody > tr").length;
  for (let index = 2; index <= numberOfRows; index++) {
@@ -20,8 +20,9 @@ function gpa() {
       var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(3)").innerHTML);
       var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML);
       var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
+            var diemchu = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML;
       if (!isNaN(diem10) && !isNaN(diem4)) {
-        rowData = [ten, tin, diem10, diem4];
+        rowData = [ten, tin, diem10, diem4,diemchu];
       }
       
     } else if (numberOfColumns === 10) {
@@ -29,8 +30,9 @@ function gpa() {
       var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML);
       var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
       var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML);
+            var diemchu = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(7)").innerHTML;
       if (!isNaN(diem10) && !isNaN(diem4)) {
-        rowData = [ten, tin, diem10, diem4];
+        rowData = [ten, tin, diem10, diem4,diemchu];
       }
      
 
@@ -39,8 +41,9 @@ function gpa() {
       var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
       var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML);
       var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(7)").innerHTML);
+            var diemchu = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(8)").innerHTML;
       if (!isNaN(diem10) && !isNaN(diem4)) {
-        rowData = [ten, tin, diem10, diem4];
+        rowData = [ten, tin, diem10, diem4,diemchu];
       }
       
     }

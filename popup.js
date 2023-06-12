@@ -61,7 +61,13 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.runtime.sendMessage({ action: "runGpa" });
   });
 });
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("page-link").addEventListener("click", function () {
+   
+    chrome.tabs.create({ url: 'https://www.facebook.com/ULSA.IT/' });
 
+  });
+});
 
 
 

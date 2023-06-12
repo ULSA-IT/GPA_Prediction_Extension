@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #BA9DF4;
+  background-color: #ba9df4;
 }
 h2 {
   text-align: center;
@@ -51,11 +51,11 @@ h2 {
   box-shadow: none;
 }
 
-a.page-link {
+a .page-link {
   text-decoration: none; /* Remove underline */
-  color: #8B51FD; /* Set color to pastel purple */
+  color: #8b51fd; /* Set color to pastel purple */
 }
 
-a{
+a {
   text-decoration: none;
 }
