@@ -1,3 +1,7 @@
+/* set background color for website using background.png */
+body {
+
+}
 * {
   margin: 0;
   padding: 0;
@@ -5,12 +9,17 @@
 }
 .content {
   width: 370px;
-  height: 150px;
+  height: 200px;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ba9df4;
+  /* background-color: #ba9df4; */
+  background-image: url("background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 h2 {
   text-align: center;
@@ -51,11 +60,14 @@ h2 {
   box-shadow: none;
 }
 
-a .page-link {
+a.page-link {
   text-decoration: none; /* Remove underline */
   color: #8b51fd; /* Set color to pastel purple */
 }
 
 a {
   text-decoration: none;
+}
+div.slider_round {
+  color: red;
 }

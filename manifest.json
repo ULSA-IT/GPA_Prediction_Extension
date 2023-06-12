@@ -11,9 +11,9 @@
     },
     "permissions": [
       "activeTab",
-      "http://sinhvien.ulsa.edu.vn/KetQuaHocTap.aspx",
       "scripting",
-      "tabs"
+      "tabs",
+      "downloads"
     ],
     "host_permissions": [
       "<all_urls>"
