@@ -27,7 +27,7 @@ window.onload = () => {
       const tab = tabs[0];
       console.log(tab);
 
-      if (tab.url && new URL(tab.url)?.hostname == "sinhvien.ulsa.edu.vn") {
+      if (tab.url && tab.url.startsWith("http://sinhvien.ulsa.edu.vn/KetQuaHocTap.aspx")) {
         switchBtn.style.display = "block";
         warningText.style.display = "none";
 
