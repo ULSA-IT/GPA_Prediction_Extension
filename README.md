@@ -1,3 +1,3 @@
 # GPA_Prediction
-### Status: On Process
+## Status: On Progress
 ### Release Date: Unknown
