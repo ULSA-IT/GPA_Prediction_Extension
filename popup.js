@@ -6,7 +6,6 @@ function getActiveTab(callback) {
 window.onload = () => {
   const toggleBtn = document.querySelector("#togBtn");
   const switchBtn = document.querySelector(".switch");
-  const switchInp = switchBtn.querySelector("input");
   const warningText = document.querySelector(".warning");
 
   function handleToggle(value) {
@@ -17,7 +16,13 @@ window.onload = () => {
           message: "toggle",
           value: value,
         },
-        function (response) {}
+        function (response) {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          } else {
+            console.log("Toggle response:", response);
+          }
+        }
       );
     });
   }
@@ -26,24 +31,16 @@ window.onload = () => {
     getActiveTab(function (tabs) {
       const tab = tabs[0];
       console.log(tab);
-
       if (tab.url && tab.url.startsWith("http://sinhvien.ulsa.edu.vn/KetQuaHocTap.aspx")) {
+        document.getElementById('direct-link').style.display = 'none';
+        document.getElementById('get-grade').style.display = 'block';
         switchBtn.style.display = "block";
-        warningText.style.display = "none";
-
-        chrome.tabs.sendMessage(
-          tabs[0].id,
-          {
-            message: "syncToggle",
-          },
-          function (response) {
-            let value = response.value === "true";
-            switchInp.checked = value;
-          }
-        );
+        console.log("correct URL: ", tab.url);
       } else {
+        document.getElementById('direct-link').style.display = 'block';
+        document.getElementById('get-grade').style.display = 'none';
         switchBtn.style.display = "none";
-        warningText.style.display = "block";
+        console.log("wrong URL: ", tab.url);
       }
     });
   }
@@ -57,15 +54,13 @@ window.onload = () => {
 
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("myButton").addEventListener("click", function () {
-   
     chrome.runtime.sendMessage({ action: "runGpa" });
   });
 });
+
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("page-link").addEventListener("click", function () {
-   
     chrome.tabs.create({ url: 'https://www.facebook.com/ULSA.IT/' });
-
   });
 });
 

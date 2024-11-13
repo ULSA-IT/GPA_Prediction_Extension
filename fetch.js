@@ -67,10 +67,18 @@ function gpa() {
  link.download = 'diem.xlsx';
  link.click();
  }
- chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "runGpa") {
     gpa();
     sendResponse({ success: true }); // Gửi phản hồi thành công về background script
+  }
+});
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.message === "syncToggle") {
+    sendResponse({ url: window.location.href, value: "true" }); // Example response
+  } else if (request.message === "toggle") {
+    // Handle the toggle message
+    sendResponse({ success: true });
   }
 });
 
