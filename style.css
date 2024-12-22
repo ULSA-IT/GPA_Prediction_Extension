@@ -7,11 +7,11 @@
   width: 370px;
   height: 200px;
   color: white;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   /* background-color: #ba9df4; */
-  background-image: url("background.png");
+  background-image: url("background.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

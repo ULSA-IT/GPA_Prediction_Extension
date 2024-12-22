@@ -1,78 +1,105 @@
 
 function gpa() {
-  // Tạo một workbook mới
- var workbook = XLSX.utils.book_new();
- 
- // Tạo một worksheet mới và đặt tiêu đề cột
- var worksheet = XLSX.utils.aoa_to_sheet([['Tên', 'Tín chỉ', 'Điểm hệ 10', 'Điểm hệ 4','Điểm chữ']]);
- 
- var numberOfRows = document.querySelectorAll("#grdDiemDaTichLuy > tbody > tr").length;
- for (let index = 2; index <= numberOfRows; index++) {
-  var checkbox = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ")  input[type='checkbox']");
-  var checkgpa = checkbox.checked;
+  const HEADERS = ['Tên', 'Tín chỉ', 'Điểm hệ 10', 'Điểm hệ 4', 'Điểm chữ'];
+  const TABLE_SELECTOR = '#grdDiemDaTichLuy > tbody > tr';
+  
+  // Column indices mapping based on total columns in row
+  const COLUMN_MAPS = {
+    9:  { ten: 2, tin: 3, diem10: 4, diem4: 5, diemchu: 6 },
+    10: { ten: 3, tin: 4, diem10: 5, diem4: 6, diemchu: 7 },
+    11: { ten: 4, tin: 5, diem10: 6, diem4: 7, diemchu: 8 }
+  };
 
-  if (!checkgpa) {
-    var numberOfColumns = document.querySelectorAll("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td").length;
-    var rowData = [];
-
-    if (numberOfColumns === 9) {
-      var ten = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(2)").innerHTML;
-      var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(3)").innerHTML);
-      var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML);
-      var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
-            var diemchu = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML;
-      if (!isNaN(diem10) && !isNaN(diem4)) {
-        rowData = [ten, tin, diem10, diem4,diemchu];
-      }
-      
-    } else if (numberOfColumns === 10) {
-      var ten = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(3)").innerHTML;
-      var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML);
-      var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
-      var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML);
-            var diemchu = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(7)").innerHTML;
-      if (!isNaN(diem10) && !isNaN(diem4)) {
-        rowData = [ten, tin, diem10, diem4,diemchu];
-      }
-     
-
-    } else {
-      var ten = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(4)").innerHTML;
-      var tin = parseInt(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(5)").innerHTML);
-      var diem10 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(6)").innerHTML);
-      var diem4 = parseFloat(document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(7)").innerHTML);
-            var diemchu = document.querySelector("#grdDiemDaTichLuy > tbody > tr:nth-child(" + index + ") > td:nth-child(8)").innerHTML;
-      if (!isNaN(diem10) && !isNaN(diem4)) {
-        rowData = [ten, tin, diem10, diem4,diemchu];
-      }
-      
-    }
-    
-    if (rowData.length > 0) {
-    XLSX.utils.sheet_add_aoa(worksheet, [rowData], { origin: -1 }); // Thêm dữ liệu vào worksheet
-    }
+  // Helper function to safely get cell data
+  function getCellData(row, columnIndex) {
+    return row.querySelector(`td:nth-child(${columnIndex})`)?.innerHTML || '';
   }
+
+  // Process a single row
+  function processRow(row, columnMap) {
+    const ten = getCellData(row, columnMap.ten);
+    const tin = parseInt(getCellData(row, columnMap.tin));
+    const diem10 = parseFloat(getCellData(row, columnMap.diem10));
+    const diem4 = parseFloat(getCellData(row, columnMap.diem4));
+    const diemchu = getCellData(row, columnMap.diemchu);
+
+    if (!isNaN(diem10) && !isNaN(diem4)) {
+      return [ten, tin, diem10, diem4, diemchu];
+    }
+    return null;
+  }
+
+  // Create workbook and worksheet
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet([HEADERS]);
+
+  // Get all rows and process them
+  const rows = document.querySelectorAll(TABLE_SELECTOR);
+  const processedData = Array.from(rows)
+    .slice(1) // Skip header row
+    .reduce((acc, row) => {
+      // Skip if checkbox is checked
+      const checkbox = row.querySelector('input[type="checkbox"]');
+      if (checkbox?.checked) return acc;
+
+      // Get column mapping based on number of columns
+      const columnCount = row.querySelectorAll('td').length;
+      const columnMap = COLUMN_MAPS[columnCount];
+      if (!columnMap) return acc;
+
+      // Process row and add to accumulator if valid
+      const rowData = processRow(row, columnMap);
+      if (rowData) acc.push(rowData);
+      
+      return acc;
+    }, []);
+
+  // Add all processed data to worksheet
+  if (processedData.length > 0) {
+    XLSX.utils.sheet_add_aoa(worksheet, processedData, { origin: -1 });
+  }
+
+  // Find the maximum width of the first column
+  const maxWidth = Math.max(
+    HEADERS[0].length,
+    ...processedData.map(row => row[0].length)
+  );
+
+  // Set column width for the first column (A)
+  worksheet['!cols'] = [
+    { wch: maxWidth + 2 }, // Add 2 for padding
+    { wch: 8 },  // Default width for other columns
+    { wch: 8 },
+    { wch: 8 },
+    { wch: 8 }
+  ];
+
+  // Add worksheet to workbook
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Danh sách điểm');
+
+  // Create and download Excel file
+  const excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelData], { 
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+  });
+  
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'diem_ca_nhan_1.xlsx';
+  link.click();
+  
+  // Clean up
+  URL.revokeObjectURL(url);
 }
 
- XLSX.utils.book_append_sheet(workbook, worksheet, 'Danh sách điểm'); // Đặt tên cho worksheet và thêm vào workbook
- 
- // Ghi workbook vào một dạng dữ liệu Excel
- var excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
- 
- // Tạo file Excel từ dữ liệu và tải xuống
- var blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
- var url = URL.createObjectURL(blob);
- var link = document.createElement('a');
- link.href = url;
- link.download = 'diem.xlsx';
- link.click();
- }
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "runGpa") {
     gpa();
     sendResponse({ success: true }); // Gửi phản hồi thành công về background script
   }
 });
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === "syncToggle") {
     sendResponse({ url: window.location.href, value: "true" }); // Example response
