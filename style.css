@@ -2,10 +2,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  text-align: center;
 }
 .content {
   width: 370px;
-  height: 200px;
+  height: 220px;
   color: white;
   /* display: flex; */
   justify-content: center;
@@ -39,7 +40,7 @@ h2 {
   padding: 1.5em 3em;
   background: var(--bg);
   transition: 0.2s;
-  margin: 15px;
+  margin: 15px 15px 0 15px;
   font-weight: bold;
   font-size: 20px;
 }
@@ -63,7 +64,15 @@ a.page-link {
 
 a {
   text-decoration: none;
+  text-shadow: none;
+}
+a:hover {
+  text-decoration: underline;
 }
 div.slider_round {
   color: red;
+  padding-top: 24px;
+}
+.blwarning {
+  padding-top: 24px;
 }
