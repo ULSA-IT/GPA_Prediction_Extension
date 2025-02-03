@@ -1,6 +1,6 @@
 
 function gpa() {
-  const HEADERS = ['Tên', 'Tín chỉ', 'Điểm hệ 10', 'Điểm hệ 4', 'Điểm chữ'];
+  const HEADERS = ['STT', 'Tên', 'Tín chỉ', 'Điểm hệ 10', 'Điểm hệ 4', 'Điểm chữ'];
   const TABLE_SELECTOR = '#grdDiemDaTichLuy > tbody > tr';
   
   // Column indices mapping based on total columns in row
@@ -16,81 +16,85 @@ function gpa() {
   }
 
   // Process a single row
-  function processRow(row, columnMap) {
-    const ten = getCellData(row, columnMap.ten);
-    const tin = parseInt(getCellData(row, columnMap.tin));
-    const diem10 = parseFloat(getCellData(row, columnMap.diem10));
-    const diem4 = parseFloat(getCellData(row, columnMap.diem4));
-    const diemchu = getCellData(row, columnMap.diemchu);
+function processRow(row, columnMap, index) {
+  const ten = getCellData(row, columnMap.ten);
+  const tin = parseInt(getCellData(row, columnMap.tin));
+  const diem10 = parseFloat(getCellData(row, columnMap.diem10));
+  const diem4 = parseFloat(getCellData(row, columnMap.diem4));
+  const diemchu = getCellData(row, columnMap.diemchu);
 
-    if (!isNaN(diem10) && !isNaN(diem4)) {
-      return [ten, tin, diem10, diem4, diemchu];
+  if (!isNaN(diem10) && !isNaN(diem4)) {
+    return [index + 1, ten, tin, diem10, diem4, diemchu];
+  }
+  return null;
+}
+
+// Create workbook and worksheet
+const workbook = XLSX.utils.book_new();
+const worksheet = XLSX.utils.aoa_to_sheet([HEADERS]);
+
+// Get all rows and process them
+const rows = document.querySelectorAll(TABLE_SELECTOR);
+let count = 0;
+const processedData = Array.from(rows)
+  .slice(1) // Skip header row
+  .reduce((acc, row) => {
+    // Skip if checkbox is checked
+    const checkbox = row.querySelector('input[type="checkbox"]');
+    if (checkbox?.checked) return acc;
+
+    // Get column mapping based on number of columns
+    const columnCount = row.querySelectorAll('td').length;
+    const columnMap = COLUMN_MAPS[columnCount];
+    if (!columnMap) return acc;
+
+    // Process row and add to accumulator if valid
+    const rowData = processRow(row, columnMap, count);
+    if (rowData) {
+      acc.push(rowData);
+      count++;
     }
-    return null;
-  }
+    
+    return acc;
+  }, []);
 
-  // Create workbook and worksheet
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.aoa_to_sheet([HEADERS]);
+// Add all processed data to worksheet
+if (processedData.length > 0) {
+  XLSX.utils.sheet_add_aoa(worksheet, processedData, { origin: -1 });
+}
 
-  // Get all rows and process them
-  const rows = document.querySelectorAll(TABLE_SELECTOR);
-  const processedData = Array.from(rows)
-    .slice(1) // Skip header row
-    .reduce((acc, row) => {
-      // Skip if checkbox is checked
-      const checkbox = row.querySelector('input[type="checkbox"]');
-      if (checkbox?.checked) return acc;
+// Find the maximum width of the first column
+const maxWidth = Math.max(
+  HEADERS[0].length,
+  ...processedData.map(row => row[1].length)
+);
 
-      // Get column mapping based on number of columns
-      const columnCount = row.querySelectorAll('td').length;
-      const columnMap = COLUMN_MAPS[columnCount];
-      if (!columnMap) return acc;
+// Set column width for the first column (A)
+worksheet['!cols'] = [
+  { wch: 8 },  // Default width
+  { wch: maxWidth + 2 }, // Add space for subject name
+  { wch: 8 },
+  { wch: 8 },
+  { wch: 8 }
+];
 
-      // Process row and add to accumulator if valid
-      const rowData = processRow(row, columnMap);
-      if (rowData) acc.push(rowData);
-      
-      return acc;
-    }, []);
+// Add worksheet to workbook
+XLSX.utils.book_append_sheet(workbook, worksheet, 'Danh sách điểm');
 
-  // Add all processed data to worksheet
-  if (processedData.length > 0) {
-    XLSX.utils.sheet_add_aoa(worksheet, processedData, { origin: -1 });
-  }
+// Create and download Excel file
+const excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+const blob = new Blob([excelData], { 
+  type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+});
 
-  // Find the maximum width of the first column
-  const maxWidth = Math.max(
-    HEADERS[0].length,
-    ...processedData.map(row => row[0].length)
-  );
+const url = URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = 'diem_ca_nhan.xlsx';
+link.click();
 
-  // Set column width for the first column (A)
-  worksheet['!cols'] = [
-    { wch: maxWidth + 2 }, // Add 2 for padding
-    { wch: 8 },  // Default width for other columns
-    { wch: 8 },
-    { wch: 8 },
-    { wch: 8 }
-  ];
-
-  // Add worksheet to workbook
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Danh sách điểm');
-
-  // Create and download Excel file
-  const excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  const blob = new Blob([excelData], { 
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-  });
-  
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'diem_ca_nhan_1.xlsx';
-  link.click();
-  
-  // Clean up
-  URL.revokeObjectURL(url);
+// Clean up
+URL.revokeObjectURL(url);
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
